@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeImporter.Cli", "EmployeeImporter.Cli\EmployeeImporter.Cli.csproj", "{6DDA88EB-8530-422A-B9D1-5F87D473E593}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{61DE4CC1-6B12-4705-B0D4-D92FB3B27CA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{6DDA88EB-8530-422A-B9D1-5F87D473E593}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DDA88EB-8530-422A-B9D1-5F87D473E593}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DDA88EB-8530-422A-B9D1-5F87D473E593}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61DE4CC1-6B12-4705-B0D4-D92FB3B27CA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61DE4CC1-6B12-4705-B0D4-D92FB3B27CA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61DE4CC1-6B12-4705-B0D4-D92FB3B27CA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61DE4CC1-6B12-4705-B0D4-D92FB3B27CA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
