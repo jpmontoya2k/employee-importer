@@ -42,8 +42,10 @@ public static class Program
                 .Build();
 
             var pipeline = host.Services.GetRequiredService<TypeAConvertingPipeline>();
+            var resultsWriterFactory = host.Services.GetRequiredService<IResultsWriterFactory>();
+            
             using var reader = new StreamReader(File.OpenRead(options.InputFilePath));
-            using var resultsWriter = ResultsWriterFactory.Create(options.InputFilePath);
+            using var resultsWriter = resultsWriterFactory.Create(options.InputFilePath);
             
             await foreach (var result in pipeline.Run(reader))
             {
@@ -70,6 +72,10 @@ public static class Program
                     .AddEnvironmentVariables()
                     .AddCommandLine(args);
             })
-            .ConfigureServices(s => s.AddTransient<TypeAConvertingPipeline>());
+            .ConfigureServices(s =>
+            {
+                s.AddTransient<TypeAConvertingPipeline>();
+                s.AddTransient<IResultsWriterFactory, ResultsWriterFactory>();
+            });
     }
 }

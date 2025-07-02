@@ -3,9 +3,14 @@ using CsvHelper;
 
 namespace EmployeeImporter.Cli.Output;
 
-public static class ResultsWriterFactory
+public interface IResultsWriterFactory
 {
-    public static IResultsWriter Create(string inputFilePath)
+    IResultsWriter Create(string inputFilePath);
+}
+
+public class ResultsWriterFactory : IResultsWriterFactory
+{
+    public IResultsWriter Create(string inputFilePath)
     {
         var baseFileName = Path.GetFileNameWithoutExtension(inputFilePath);
         var directory = Path.GetDirectoryName(inputFilePath);
