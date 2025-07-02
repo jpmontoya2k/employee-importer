@@ -369,3 +369,5 @@ FodyWeavers.xsd
 /.idea/**
 /EmployeeImporter.Cli/TypeAPipeline/sample.common.csv
 /EmployeeImporter.Cli/TypeAPipeline/sample.errors.jsonl
+/EmployeeImporter.Cli/TypeBPipeline/sample.common.csv
+/EmployeeImporter.Cli/TypeBPipeline/sample.errors.jsonl
