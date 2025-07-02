@@ -37,16 +37,9 @@ public static class Program
             using var host = CreateHost(args)
                 .Build();
 
-            var pipelineFactory = host.Services.GetRequiredService<IConvertingPipelineFactory>();
-            var resultsWriterFactory = host.Services.GetRequiredService<IResultsWriterFactory>();
-            
-            using var pipeline = pipelineFactory.Create(options.InputFilePath, options.ParserType);
-            using var resultsWriter = resultsWriterFactory.Create(options.InputFilePath);
-            
-            await foreach (var result in pipeline.ProcessRecords())
-            {
-                resultsWriter.Persist(result);
-            }
+            var importer = host.Services.GetRequiredService<IRecordsImporter>();
+
+            await importer.ImportRecords(options);
 
             return 0;
         }
@@ -70,6 +63,7 @@ public static class Program
             })
             .ConfigureServices(s =>
             {
+                s.AddTransient<IRecordsImporter, RecordsImporter>();
                 s.AddTransient<IFileSystem, OsFileSystem>();
                 s.AddTransient<IConvertingPipelineFactory, ConvertingPipelineFactory>();
                 s.AddTransient<IResultsWriterFactory, ResultsWriterFactory>();
