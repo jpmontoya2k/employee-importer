@@ -1,6 +1,7 @@
 ﻿using EmployeeImporter.Cli.Common;
 using EmployeeImporter.Cli.TypeAPipeline;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Sandbox;
 
@@ -22,7 +23,7 @@ public class TypeAPipelineConcept
 
         var reader = new StringReader(testCsv);
 
-        using var pipeline = new TypeAConvertingPipeline(reader);
+        using var pipeline = new TypeAConvertingPipeline(reader, NullLogger<TypeAConvertingPipeline>.Instance);
 
         var results = new List<RecordConversionResult>();
         await foreach (var result in pipeline.ProcessRecords())

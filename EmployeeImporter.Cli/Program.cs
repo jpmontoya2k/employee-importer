@@ -1,6 +1,8 @@
 ﻿using CommandLine;
 using EmployeeImporter.Cli.Common;
 using EmployeeImporter.Cli.Output;
+using EmployeeImporter.Cli.TypeAPipeline;
+using EmployeeImporter.Cli.TypeBPipeline;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -70,6 +72,14 @@ public static class Program
             {
                 s.AddTransient<IConvertingPipelineFactory, ConvertingPipelineFactory>();
                 s.AddTransient<IResultsWriterFactory, ResultsWriterFactory>();
+                
+                // Type A
+                s.AddTransient<ITypeAConvertingPipelineFactory, TypeAConvertingPipelineFactory>();
+                
+                // Type B
+                s.AddTransient<ITypeBConvertingPipelineFactory, TypeBConvertingPipelineFactory>();
+                s.AddTransient<ITypeBRecordDtoConverter, TypeBRecordDtoConverter>();
+                s.AddTransient<ICurrencyConverter, NoopCurrencyConverter>();
             });
     }
 }
