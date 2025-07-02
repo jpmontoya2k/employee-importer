@@ -9,18 +9,26 @@ public readonly struct RecordConversionResult
         Data = data;
     }
 
-    public RecordConversionResult(string rawData, List<ValidationFailure>? errors)
+    public RecordConversionResult(string rawData, List<ValidationFailure>? validationErrors)
     {
         RawData = rawData;
-        Errors = errors;
+        ValidationErrors = validationErrors;
+    }
+
+    public RecordConversionResult(string rawData, Exception processingError)
+    {
+        RawData = rawData;
+        ProcessingError = processingError;
     }
 
     public CommonModelDto? Data { get; }
     public string? RawData { get; }
-    public List<ValidationFailure>? Errors { get; }
-    public bool IsSuccess() => Errors == null;
+    public List<ValidationFailure>? ValidationErrors { get; }
+    public Exception ProcessingError { get; }
+    public bool IsSuccess() => ValidationErrors == null;
 
     // Factory methods for convenience
     public static RecordConversionResult Success(CommonModelDto data) => new(data);
     public static RecordConversionResult Failure(string rawData, List<ValidationFailure>? errors) => new(rawData.Trim(), errors);
+    public static RecordConversionResult Failure(string rawData, Exception ex) => new(rawData.Trim(), ex);
 }

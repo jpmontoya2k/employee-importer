@@ -1,0 +1,6 @@
+ID,Name,Surname,CorporateEmail,PersonalEmail,Salary
+USR-201,Carlos,Santana,c.santana@company.com,carlos.s@email.com,"$85,000"
+USR-202,Diana,Ross,d.ross@company.com,,$150000.00
+USR-203,Frank,Zappa,,frank.z@mail.net,99000
+USR-204,Grace,Jones,g.jones@company.com,grace.jones@personal.org,120,500.25
+USR-205,Henry,Rollins,,,"$65000"
