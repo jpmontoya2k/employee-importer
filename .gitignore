@@ -367,3 +367,5 @@ MigrationBackup/
 FodyWeavers.xsd
 **/.tye/**
 /.idea/**
+/EmployeeImporter.Cli/TypeAPipeline/sample.common.csv
+/EmployeeImporter.Cli/TypeAPipeline/sample.errors.jsonl

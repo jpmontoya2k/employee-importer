@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using CsvHelper;
-using CsvHelper.Configuration;
+﻿using EmployeeImporter.Cli.Common;
 using EmployeeImporter.Cli.TypeAPipeline;
 using FluentAssertions;
 
@@ -8,37 +6,32 @@ namespace Sandbox;
 
 public class TypeAPipelineConcept
 {
-
-    
     [Fact]
-    public void Run()
+    public async Task Run()
     {
-        var testCsv = Resources1.type_a;
-        testCsv.Should().NotBeNullOrEmpty("test data is expected there");
+        const string testCsv = """
+                               CustomerID,FullName,Email,Phone,Salary
+                               101,Jane Doe,jane.doe@example.com,555-0101,75000.50
+                               102, John Smith , john.smith@workplace.com ,555-0102,92000.00
+                               103,Alice,invalid.email,555-0103,68000.75
+                               104,Bob Johnson,bob.j@personal.co.uk,555-0104,110000
+                               105,Eve Williams,eve.williams@example.com,,54000
+                               106,Kate Ho,kate@corp.com,invalid-phone,55000
+                               107,Don Ho,kate@corp.com,invalid-phone,-55000
+                               """;
 
-        var csvReaderConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
+        var reader = new StringReader(testCsv);
+
+        var pipeline = new TypeAConvertingPipeline();
+
+        var results = new List<RecordConversionResult>();
+        await foreach (var result in pipeline.Run(reader))
         {
-            HasHeaderRecord = true,
-        };
-
-        using (var reader = new StringReader(testCsv))
-        using (var csvReader = new CsvReader(reader, csvReaderConfig))
-        {
-            var results = new List<RecordConversionResult>();
-            foreach (var recordDto in csvReader.GetRecords<TypeARecordDto>())
-            {
-                var validationResult = TypeARecordDtoValidator.Instance.Validate(recordDto);
-
-                if (validationResult.IsValid)
-                {
-                    var result = recordDto.ToCommonModelDto();
-                    results.Add(RecordConversionResult.Success(result));
-                }
-                else
-                {
-                    results.Add(RecordConversionResult.Failure(validationResult.Errors));
-                }
-            }
+            results.Add(result);
         }
+
+        results.Count.Should().Be(7);
+        results.Count(x => x.IsSuccess()).Should().Be(4);
+        results.Count(x => !x.IsSuccess()).Should().Be(3);
     }
 }

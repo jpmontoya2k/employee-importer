@@ -24,7 +24,7 @@ public partial class TypeARecordDtoValidator : AbstractValidator<TypeARecordDto>
 
         RuleFor(x => x.Phone)
             .ChildRules(phone => phone.RuleFor(p => p)
-                .Must(HaveValidPhoneCharacters).WithMessage("Phone number contains invalid characters. Only numbers, spaces, parentheses, hyphens, and a leading '+' are allowed.")
+                .Must(HaveValidPhoneCharacters).WithMessage("Phone number contains invalid characters. Only numbers, spaces, parentheses, hyphens, and a leading plus are allowed.")
             )
             .When(x => !string.IsNullOrWhiteSpace(x.Phone), ApplyConditionTo.CurrentValidator);
 

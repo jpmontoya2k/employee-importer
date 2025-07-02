@@ -1,7 +1,6 @@
-using EmployeeImporter.Cli.Common;
 using FluentValidation.Results;
 
-namespace Sandbox;
+namespace EmployeeImporter.Cli.Common;
 
 public readonly struct RecordConversionResult
 {
@@ -10,16 +9,18 @@ public readonly struct RecordConversionResult
         Data = data;
     }
 
-    public RecordConversionResult(List<ValidationFailure>? errors)
+    public RecordConversionResult(string rawData, List<ValidationFailure>? errors)
     {
+        RawData = rawData;
         Errors = errors;
     }
 
     public CommonModelDto? Data { get; }
+    public string? RawData { get; }
     public List<ValidationFailure>? Errors { get; }
-    public bool IsSuccess => Errors == null;
+    public bool IsSuccess() => Errors == null;
 
     // Factory methods for convenience
     public static RecordConversionResult Success(CommonModelDto data) => new(data);
-    public static RecordConversionResult Failure(List<ValidationFailure>? errors) => new(errors);
+    public static RecordConversionResult Failure(string rawData, List<ValidationFailure>? errors) => new(rawData.Trim(), errors);
 }

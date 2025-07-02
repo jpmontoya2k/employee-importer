@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CommandLine;
+using EmployeeImporter.Cli.Output;
+using EmployeeImporter.Cli.TypeAPipeline;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace EmployeeImporter.Cli;
 
@@ -14,20 +17,44 @@ public static class Program
             .WriteTo.Console()
             .CreateLogger();
 
+        var exitCode = Parser.Default.ParseArguments<ConversionOptions>(args)
+            .MapResult(
+                opts => RunApplication(args, opts, Log.Logger).Result,
+                _ => 1
+            );
+
+        Log.CloseAndFlush();
+
+        return exitCode;
+    }
+
+    public static async Task<int> RunApplication(string[] args, ConversionOptions options, ILogger logger)
+    {
         try
         {
+            if (!File.Exists(options.InputFilePath))
+            {
+                logger.Fatal("File {ValueFilePath} does not exist", options.InputFilePath);
+                return 1;
+            }
+
             using var host = CreateHost(args)
                 .Build();
-        
-            var greeter = host.Services.GetRequiredService<WorldGreeter>();
-        
-            greeter.Greet();
-                
+
+            var pipeline = host.Services.GetRequiredService<TypeAConvertingPipeline>();
+            using var reader = new StreamReader(File.OpenRead(options.InputFilePath));
+            using var resultsWriter = ResultsWriterFactory.Create(options.InputFilePath);
+            
+            await foreach (var result in pipeline.Run(reader))
+            {
+                resultsWriter.Persist(result);
+            }
+
             return 0;
         }
         catch (Exception ex)
         {
-            Log.Logger.Fatal(ex, "Fatal error");
+            logger.Fatal(ex, "Fatal error");
             return 1;
         }
     }
@@ -43,16 +70,6 @@ public static class Program
                     .AddEnvironmentVariables()
                     .AddCommandLine(args);
             })
-            .ConfigureServices(s => s.AddTransient<WorldGreeter>());
-    }
-}
-
-public class WorldGreeter(ILogger<WorldGreeter> logger)
-{
-    private readonly ILogger<WorldGreeter> _logger = logger ??  throw new ArgumentNullException(nameof(logger));
-
-    public void Greet()
-    {
-        _logger.LogInformation("Hello from Greeter");
+            .ConfigureServices(s => s.AddTransient<TypeAConvertingPipeline>());
     }
 }

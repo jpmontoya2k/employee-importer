@@ -5,3 +5,4 @@ CustomerID,FullName,Email,Phone,Salary
 104,Bob Johnson,bob.j@personal.co.uk,555-0104,110000
 105,Eve Williams,eve.williams@example.com,,54000
 106,Kate Ho,kate@corp.com,invalid-phone,55000
+107,Don Ho,kate@corp.com,invalid-phone,-55000
