@@ -32,7 +32,7 @@ public class ResultsWriter : IResultsWriter
     {
         if (_disposed)
             throw new ObjectDisposedException(nameof(ResultsWriter));
-
+        
         if (result.IsSuccess())
         {
             _csvWriter.WriteRecord(result.Data);

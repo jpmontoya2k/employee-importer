@@ -1,6 +1,6 @@
 namespace EmployeeImporter.Cli.Common;
 
-public interface IConvertingPipeline
+public interface IConvertingPipeline : IDisposable
 {
-    IAsyncEnumerable<RecordConversionResult> Run(TextReader inputReader);
+    IAsyncEnumerable<RecordConversionResult> ProcessRecords();
 }

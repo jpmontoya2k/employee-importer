@@ -22,10 +22,10 @@ public class TypeAPipelineConcept
 
         var reader = new StringReader(testCsv);
 
-        var pipeline = new TypeAConvertingPipeline();
+        using var pipeline = new TypeAConvertingPipeline(reader);
 
         var results = new List<RecordConversionResult>();
-        await foreach (var result in pipeline.Run(reader))
+        await foreach (var result in pipeline.ProcessRecords())
         {
             results.Add(result);
         }

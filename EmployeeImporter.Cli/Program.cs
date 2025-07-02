@@ -1,6 +1,6 @@
 ﻿using CommandLine;
+using EmployeeImporter.Cli.Common;
 using EmployeeImporter.Cli.Output;
-using EmployeeImporter.Cli.TypeAPipeline;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,22 +32,16 @@ public static class Program
     {
         try
         {
-            if (!File.Exists(options.InputFilePath))
-            {
-                logger.Fatal("File {ValueFilePath} does not exist", options.InputFilePath);
-                return 1;
-            }
-
             using var host = CreateHost(args)
                 .Build();
 
-            var pipeline = host.Services.GetRequiredService<TypeAConvertingPipeline>();
+            var pipelineFactory = host.Services.GetRequiredService<IConvertingPipelineFactory>();
             var resultsWriterFactory = host.Services.GetRequiredService<IResultsWriterFactory>();
             
-            using var reader = new StreamReader(File.OpenRead(options.InputFilePath));
+            using var pipeline = pipelineFactory.Create(options.InputFilePath, options.ParserType);
             using var resultsWriter = resultsWriterFactory.Create(options.InputFilePath);
             
-            await foreach (var result in pipeline.Run(reader))
+            await foreach (var result in pipeline.ProcessRecords())
             {
                 resultsWriter.Persist(result);
             }
@@ -74,7 +68,7 @@ public static class Program
             })
             .ConfigureServices(s =>
             {
-                s.AddTransient<TypeAConvertingPipeline>();
+                s.AddTransient<IConvertingPipelineFactory, ConvertingPipelineFactory>();
                 s.AddTransient<IResultsWriterFactory, ResultsWriterFactory>();
             });
     }
