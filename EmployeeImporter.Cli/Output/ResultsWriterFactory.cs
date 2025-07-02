@@ -1,5 +1,6 @@
 using System.Globalization;
 using CsvHelper;
+using EmployeeImporter.Cli.Common;
 
 namespace EmployeeImporter.Cli.Output;
 
@@ -10,6 +11,13 @@ public interface IResultsWriterFactory
 
 public class ResultsWriterFactory : IResultsWriterFactory
 {
+    private readonly IFileSystem _fileSystem;
+
+    public ResultsWriterFactory(IFileSystem fileSystem)
+    {
+        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+    }
+
     public IResultsWriter Create(string inputFilePath)
     {
         var baseFileName = Path.GetFileNameWithoutExtension(inputFilePath);
@@ -17,10 +25,10 @@ public class ResultsWriterFactory : IResultsWriterFactory
         var commonOutputPath = Path.Combine(directory ?? ".", $"{baseFileName}.common.csv");
         var errorsOutputPath = Path.Combine(directory ?? ".", $"{baseFileName}.errors.jsonl");
 
-        var commonWriter = new StreamWriter(commonOutputPath);
+        var commonWriter = _fileSystem.CreateFileWriter(commonOutputPath);
         var csvWriter = new CsvWriter(commonWriter, CultureInfo.InvariantCulture);
-        var errorsWriter = new StreamWriter(errorsOutputPath);
+        var errorsWriter = _fileSystem.CreateFileWriter(errorsOutputPath);
 
         return new ResultsWriter(csvWriter, errorsWriter);
     }
-} 
+}

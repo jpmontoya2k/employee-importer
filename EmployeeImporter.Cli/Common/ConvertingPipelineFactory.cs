@@ -5,18 +5,19 @@ namespace EmployeeImporter.Cli.Common;
 
 public class ConvertingPipelineFactory : IConvertingPipelineFactory
 {
+    private readonly IFileSystem _fileSystem;
     private readonly ITypeAConvertingPipelineFactory _aTypeConvertingPipelineFactory;
     private readonly ITypeBConvertingPipelineFactory _bTypeConvertingPipelineFactory;
 
     public ConvertingPipelineFactory(
         ITypeAConvertingPipelineFactory typeAConvertingPipelineFactory,
-        ITypeBConvertingPipelineFactory typeBConvertingPipelineFactory
-    )
+        ITypeBConvertingPipelineFactory typeBConvertingPipelineFactory, IFileSystem fileSystem)
     {
         _aTypeConvertingPipelineFactory = typeAConvertingPipelineFactory ??
                                           throw new ArgumentNullException(nameof(typeAConvertingPipelineFactory));
         _bTypeConvertingPipelineFactory = typeBConvertingPipelineFactory ??
                                           throw new ArgumentNullException(nameof(typeBConvertingPipelineFactory));
+        _fileSystem = fileSystem ??  throw new ArgumentNullException(nameof(fileSystem));
     }
 
     public IConvertingPipeline Create(string inputFilePath, string parserType)
@@ -27,7 +28,7 @@ public class ConvertingPipelineFactory : IConvertingPipelineFactory
         if (!File.Exists(inputFilePath))
             throw new FileNotFoundException($"File not found: {inputFilePath}", inputFilePath);
 
-        var reader = new StreamReader(File.OpenRead(inputFilePath));
+        var reader = _fileSystem.OpenFileReader(inputFilePath);
 
         return parserType.ToLowerInvariant() switch
         {

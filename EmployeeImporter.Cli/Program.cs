@@ -70,6 +70,7 @@ public static class Program
             })
             .ConfigureServices(s =>
             {
+                s.AddTransient<IFileSystem, OsFileSystem>();
                 s.AddTransient<IConvertingPipelineFactory, ConvertingPipelineFactory>();
                 s.AddTransient<IResultsWriterFactory, ResultsWriterFactory>();
                 
